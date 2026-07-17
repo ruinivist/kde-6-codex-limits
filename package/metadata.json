@@ -1,0 +1,18 @@
+{
+    "KPlugin": {
+        "Name": "Codex Weekly Limits",
+        "Description": "Shows Codex weekly usage",
+        "Icon": "view-statistics",
+        "Category": "System Information",
+        "Id": "de.ruiny.codexlimits",
+        "Version": "0.1.0",
+        "License": "MIT",
+        "Authors": [
+            {
+                "Name": "ruinivist"
+            }
+        ]
+    },
+    "X-Plasma-API-Minimum-Version": "6.0",
+    "KPackageStructure": "Plasma/Applet"
+}
