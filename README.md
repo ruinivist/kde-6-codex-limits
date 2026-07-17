@@ -22,3 +22,5 @@ Then add **Codex Weekly Limits** from Plasma's widget picker.
 For development, run `make dev`. Build a shareable package with `make package`.
 
 Scaffolded from [kde-6-widget-starter](https://github.com/ruinivist/kde-6-widget-starter).
+
+OpenAI and ChatGPT are trademarks of OpenAI.

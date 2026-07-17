@@ -13,17 +13,14 @@ PlasmoidItem {
     readonly property string scriptPath: Qt.resolvedUrl("../code/limits.py").toString().replace(/^file:\/\//, "")
     readonly property string command: "python3 '" + scriptPath.replace(/'/g, "'\\''") + "'"
 
-    width: Kirigami.Units.gridUnit * 14
-    height: Kirigami.Units.gridUnit * 6
+    function refresh() {
+        runner.disconnectSource(command);
+        runner.connectSource(command);
+    }
+
     preferredRepresentation: fullRepresentation
     toolTipMainText: i18n("Codex weekly limits")
     toolTipSubText: statusText
-
-    function refresh() {
-        runner.disconnectSource(command)
-        runner.connectSource(command)
-    }
-
     Component.onCompleted: refresh()
 
     Timer {
@@ -38,53 +35,58 @@ PlasmoidItem {
 
         engine: "executable"
         onNewData: function(sourceName, data) {
-            disconnectSource(sourceName)
+            disconnectSource(sourceName);
             try {
-                const result = JSON.parse(data.stdout)
+                const result = JSON.parse(data.stdout);
                 if (result.error)
-                    throw new Error(result.error)
-                root.usedPercent = result.usedPercent
-                root.statusText = i18n("%1% used", result.usedPercent)
+                    throw new Error(result.error);
+
+                root.usedPercent = result.usedPercent;
+                root.statusText = i18n("%1% used", result.usedPercent);
             } catch (error) {
-                root.usedPercent = -1
-                root.statusText = error.message || i18n("Unable to read limits")
+                root.usedPercent = -1;
+                root.statusText = error.message || i18n("Unable to read limits");
             }
         }
     }
 
-    fullRepresentation: Item {
-        Layout.minimumWidth: Kirigami.Units.gridUnit * 10
-        Layout.minimumHeight: Kirigami.Units.gridUnit * 4
-        Layout.preferredWidth: root.width
-        Layout.preferredHeight: root.height
+    fullRepresentation: RowLayout {
+        spacing: Kirigami.Units.smallSpacing
+        Layout.minimumWidth: implicitWidth
+        Layout.minimumHeight: implicitHeight
+        Layout.maximumHeight: implicitHeight
+        Accessible.name: i18n("Codex weekly usage")
+        Accessible.description: root.statusText
 
-        ColumnLayout {
-            anchors.fill: parent
-            anchors.margins: Kirigami.Units.largeSpacing
-            spacing: Kirigami.Units.smallSpacing
-
-            PlasmaComponents.Label {
-                text: i18n("Codex weekly")
-                font.bold: true
-                Layout.fillWidth: true
-            }
-
-            PlasmaComponents.ProgressBar {
-                from: 0
-                to: 100
-                value: Math.max(0, root.usedPercent)
-                indeterminate: root.usedPercent < 0
-                Accessible.name: i18n("Codex weekly usage")
-                Accessible.description: root.statusText
-                Layout.fillWidth: true
-            }
-
-            PlasmaComponents.Label {
-                text: root.statusText
-                opacity: 0.75
-                elide: Text.ElideRight
-                Layout.fillWidth: true
-            }
+        Image {
+            source: "../images/chatgpt.svg"
+            Layout.preferredWidth: usage.implicitHeight
+            Layout.preferredHeight: usage.implicitHeight
+            Layout.alignment: Qt.AlignVCenter
         }
+
+        PlasmaComponents.Label {
+            id: usage
+
+            text: (root.usedPercent < 0 ? "--" : root.usedPercent) + "%"
+            color: "white"
+            font.family: "monospace"
+        }
+
+        Rectangle {
+            color: Qt.rgba(1, 1, 1, 0.25)
+            Layout.preferredWidth: usage.implicitHeight * 5
+            Layout.preferredHeight: usage.implicitHeight * 0.6
+            Layout.alignment: Qt.AlignVCenter
+
+            Rectangle {
+                width: parent.width * Math.min(100, Math.max(0, root.usedPercent)) / 100
+                height: parent.height
+                color: "white"
+            }
+
+        }
+
     }
+
 }

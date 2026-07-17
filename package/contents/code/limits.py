@@ -37,17 +37,14 @@ def read_response(process, request_id):
 
 
 def send(process, message):
-    process.stdin.write(json.dumps(message) + "\n")
-    process.stdin.flush()
+    print(json.dumps(message), file=process.stdin, flush=True)
 
 
 def weekly_window(result):
-    snapshots = [result.get("rateLimits") or {}]
-    snapshots += list((result.get("rateLimitsByLimitId") or {}).values())
-    for snapshot in snapshots:
-        for window in (snapshot.get("primary"), snapshot.get("secondary")):
-            if window and window.get("windowDurationMins") == WEEK_MINUTES:
-                return window
+    snapshot = result.get("rateLimits") or {}
+    for window in (snapshot.get("primary"), snapshot.get("secondary")):
+        if window and window.get("windowDurationMins") == WEEK_MINUTES:
+            return window
     raise RuntimeError("Codex returned no weekly limit")
 
 
