@@ -71,7 +71,10 @@ def fetch():
         read_response(process, 1)
         send(process, {"method": "account/rateLimits/read", "id": 2})
         window = weekly_window(read_response(process, 2))
-        return {"usedPercent": window["usedPercent"]}
+        return {
+            "usedPercent": window["usedPercent"],
+            "resetsAt": window["resetsAt"],
+        }
     finally:
         process.terminate()
         try:
