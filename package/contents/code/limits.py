@@ -9,6 +9,7 @@ import sys
 from pathlib import Path
 
 WEEK_MINUTES = 7 * 24 * 60
+FIVE_HOUR_MINUTES = 5 * 60
 
 
 def find_codex():
@@ -48,6 +49,14 @@ def weekly_window(result):
     raise RuntimeError("Codex returned no weekly limit")
 
 
+def five_hour_window(result):
+    snapshot = result.get("rateLimits") or {}
+    for window in (snapshot.get("primary"), snapshot.get("secondary")):
+        if window and window.get("windowDurationMins") == FIVE_HOUR_MINUTES:
+            return window
+    raise RuntimeError("Codex returned no 5-hour limit")
+
+
 def fetch():
     process = subprocess.Popen(
         [find_codex(), "app-server", "--stdio"],
@@ -70,10 +79,14 @@ def fetch():
         )
         read_response(process, 1)
         send(process, {"method": "account/rateLimits/read", "id": 2})
-        window = weekly_window(read_response(process, 2))
+        result = read_response(process, 2)
+        weekly = weekly_window(result)
+        five_hour = five_hour_window(result)
         return {
-            "usedPercent": window["usedPercent"],
-            "resetsAt": window["resetsAt"],
+            "weeklyUsedPercent": weekly["usedPercent"],
+            "weeklyResetsAt": weekly["resetsAt"],
+            "fiveHourUsedPercent": five_hour["usedPercent"],
+            "fiveHourResetsAt": five_hour["resetsAt"],
         }
     finally:
         process.terminate()
@@ -86,11 +99,20 @@ def fetch():
 def self_test():
     result = {
         "rateLimits": {
-            "primary": {"usedPercent": 10, "windowDurationMins": 300},
-            "secondary": {"usedPercent": 42, "windowDurationMins": WEEK_MINUTES},
+            "primary": {
+                "usedPercent": 10,
+                "resetsAt": 300,
+                "windowDurationMins": FIVE_HOUR_MINUTES,
+            },
+            "secondary": {
+                "usedPercent": 42,
+                "resetsAt": 604800,
+                "windowDurationMins": WEEK_MINUTES,
+            },
         }
     }
     assert weekly_window(result)["usedPercent"] == 42
+    assert five_hour_window(result)["usedPercent"] == 10
     print("ok")
 
 
