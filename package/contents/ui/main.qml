@@ -72,7 +72,7 @@ PlasmoidItem {
                 root.weeklyResetsAt = result.weeklyResetsAt ?? 0;
                 root.fiveHourUsedPercent = result.fiveHourUsedPercent ?? -1;
                 root.fiveHourResetsAt = result.fiveHourResetsAt ?? 0;
-                root.statusText = i18n("5-hour usage %1 | weekly usage %2", root.percentText(root.fiveHourUsedPercent), root.percentText(root.weeklyUsedPercent));
+                root.statusText = i18n("5-hour %1 | weekly %2", root.percentText(root.fiveHourUsedPercent), root.percentText(root.weeklyUsedPercent));
             } catch (error) {
                 root.weeklyUsedPercent = -1;
                 root.weeklyResetsAt = 0;
