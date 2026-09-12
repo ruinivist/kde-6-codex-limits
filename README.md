@@ -1,8 +1,8 @@
-# Codex Weekly Limits
+# Codex Limits
 
-A small KDE Plasma 6 widget that shows Codex weekly usage as a progress bar.
+A small KDE Plasma 6 widget that shows Codex five-hour and weekly usage limits.
 
-It reads the weekly window from the locally authenticated Codex CLI and refreshes every five minutes. There are no settings.
+It reads the limits from the locally authenticated Codex CLI and refreshes every five minutes. There are no settings.
 
 ## Requirements
 
@@ -17,7 +17,7 @@ make check
 make install
 ```
 
-Then add **Codex Weekly Limits** from Plasma's widget picker.
+Then add **Codex Limits** from Plasma's widget picker.
 
 For development, run `make dev`. Build a shareable package with `make package`.
 

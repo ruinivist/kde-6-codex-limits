@@ -1,3 +1,22 @@
-build/
+# Build artifacts
+/build/
 *.plasmoid
+
+# Python
 __pycache__/
+*.py[cod]
+.ruff_cache/
+.venv/
+
+# Local configuration
+.env
+
+# KDE and editors
+.directory
+*.kdev4
+*.user
+*.swp
+*~
+
+# Scratch files
+scratch/

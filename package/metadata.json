@@ -1,7 +1,7 @@
 {
     "KPlugin": {
-        "Name": "Codex Weekly Limits",
-        "Description": "Shows Codex weekly usage",
+        "Name": "Codex Limits",
+        "Description": "Shows Codex usage limits",
         "Icon": "view-statistics",
         "Category": "System Information",
         "Id": "de.ruiny.codexlimits",
