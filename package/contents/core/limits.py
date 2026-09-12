@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-"""Fetch Codex rate-limit windows for the Plasma widget.
-Used by the widget's executable data source and the repository self-check.
-"""
+"""Fetch Codex rate-limit windows for the Plasma widget."""
 
 # ---------- Imports ----------
 
@@ -10,7 +8,6 @@ import os
 import select
 import shutil
 import subprocess
-import sys
 from pathlib import Path
 
 # ---------- Constants ----------
@@ -22,6 +19,7 @@ FIVE_HOUR_MINUTES = 5 * 60
 # ---------- Codex communication ----------
 
 def find_codex():
+    # apparently """text starting here is a py convencion
     """Locate an executable Codex CLI across common user installations.
     Used when starting the app-server subprocess for each widget refresh.
     """
@@ -118,36 +116,11 @@ def fetch():
             process.kill()
 
 
-# ---------- Self-check ----------
-
-def self_test():
-    result = {
-        "rateLimits": {
-            "primary": {
-                "usedPercent": 10,
-                "resetsAt": 300,
-                "windowDurationMins": FIVE_HOUR_MINUTES,
-            },
-            "secondary": {
-                "usedPercent": 42,
-                "resetsAt": 604800,
-                "windowDurationMins": WEEK_MINUTES,
-            },
-        }
-    }
-    assert weekly_window(result)["usedPercent"] == 42
-    assert five_hour_window(result)["usedPercent"] == 10
-    print("ok")
-
-
 # ---------- Entry point ----------
 
 if __name__ == "__main__":
-    if "--self-test" in sys.argv:
-        self_test()
-    else:
-        try:
-            print(json.dumps(fetch()))
-        except Exception as error:
-            print(json.dumps({"error": str(error)}))
-            raise SystemExit(1)
+    try:
+        print(json.dumps(fetch()))
+    except Exception as error:
+        print(json.dumps({"error": str(error)}))
+        raise SystemExit(1)

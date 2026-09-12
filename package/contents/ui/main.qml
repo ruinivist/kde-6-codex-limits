@@ -21,7 +21,7 @@ PlasmoidItem {
     property double fiveHourResetsAt: 0
     property double now: Date.now()
     property string statusText: i18n("Loading…")
-    readonly property string scriptPath: Qt.resolvedUrl("../code/limits.py").toString().replace(/^file:\/\//, "")
+    readonly property string scriptPath: Qt.resolvedUrl("../core/limits.py").toString().replace(/^file:\/\//, "")
     readonly property string command: "python3 '" + scriptPath.replace(/'/g, "'\\''") + "'"
 
     // ---------- Helpers ----------
@@ -70,6 +70,7 @@ PlasmoidItem {
 
     // ---------- Data loading ----------
 
+    // Plasma 6 keeps legacy DataEngines, including "executable", in Plasma5Support.
     Plasma5Support.DataSource {
         id: runner
 
@@ -87,10 +88,6 @@ PlasmoidItem {
                 root.fiveHourResetsAt = result.fiveHourResetsAt ?? 0;
                 root.statusText = i18n("5-hour %1 | weekly %2", root.percentText(root.fiveHourUsedPercent), root.percentText(root.weeklyUsedPercent));
             } catch (error) {
-                root.weeklyUsedPercent = -1;
-                root.weeklyResetsAt = 0;
-                root.fiveHourUsedPercent = -1;
-                root.fiveHourResetsAt = 0;
                 root.statusText = error.message || i18n("Unable to read limits");
             }
         }

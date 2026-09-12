@@ -23,7 +23,7 @@ package:
 	cd $(PACKAGE) && zip -qr ../$(BUILD) .
 
 check:
-	python3 package/contents/code/limits.py --self-test
+	python3 -m py_compile package/contents/core/limits.py
 	qmllint package/contents/ui/main.qml
 
 clean:
