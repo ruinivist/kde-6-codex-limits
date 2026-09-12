@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+"""Fetch Codex rate-limit windows for the Plasma widget.
+Used by the widget's executable data source and the repository self-check.
+"""
+
+# ---------- Imports ----------
 
 import json
 import os
@@ -8,11 +13,18 @@ import subprocess
 import sys
 from pathlib import Path
 
+# ---------- Constants ----------
+
 WEEK_MINUTES = 7 * 24 * 60
 FIVE_HOUR_MINUTES = 5 * 60
 
 
+# ---------- Codex communication ----------
+
 def find_codex():
+    """Locate an executable Codex CLI across common user installations.
+    Used when starting the app-server subprocess for each widget refresh.
+    """
     if path := shutil.which("codex"):
         return path
 
@@ -25,6 +37,9 @@ def find_codex():
 
 
 def read_response(process, request_id):
+    """Read the matching JSON-RPC response with a bounded wait.
+    Used by the rate-limit request sequence to avoid hanging Plasma.
+    """
     while select.select([process.stdout], [], [], 15)[0]:
         line = process.stdout.readline()
         if not line:
@@ -40,6 +55,8 @@ def read_response(process, request_id):
 def send(process, message):
     print(json.dumps(message), file=process.stdin, flush=True)
 
+
+# ---------- Rate-limit parsing ----------
 
 def weekly_window(result):
     snapshot = result.get("rateLimits") or {}
@@ -57,7 +74,12 @@ def five_hour_window(result):
     raise RuntimeError("Codex returned no 5-hour limit")
 
 
+# ---------- Public workflow ----------
+
 def fetch():
+    """Fetch and normalize the usage windows displayed by the widget.
+    Used by the command-line entry point invoked from QML.
+    """
     process = subprocess.Popen(
         [find_codex(), "app-server", "--stdio"],
         stdin=subprocess.PIPE,
@@ -96,6 +118,8 @@ def fetch():
             process.kill()
 
 
+# ---------- Self-check ----------
+
 def self_test():
     result = {
         "rateLimits": {
@@ -115,6 +139,8 @@ def self_test():
     assert five_hour_window(result)["usedPercent"] == 10
     print("ok")
 
+
+# ---------- Entry point ----------
 
 if __name__ == "__main__":
     if "--self-test" in sys.argv:

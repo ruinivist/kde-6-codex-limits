@@ -1,3 +1,8 @@
+// Defines the Codex usage panel, refresh lifecycle, and compact/full displays.
+// Used as the Plasma applet's root UI and its bridge to the Python limit reader.
+
+// ---------- Imports ----------
+
 import QtQuick
 import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
@@ -8,6 +13,8 @@ import org.kde.plasma.plasmoid
 PlasmoidItem {
     id: root
 
+    // ---------- State ----------
+
     property real weeklyUsedPercent: -1
     property double weeklyResetsAt: 0
     property real fiveHourUsedPercent: -1
@@ -16,6 +23,8 @@ PlasmoidItem {
     property string statusText: i18n("Loading…")
     readonly property string scriptPath: Qt.resolvedUrl("../code/limits.py").toString().replace(/^file:\/\//, "")
     readonly property string command: "python3 '" + scriptPath.replace(/'/g, "'\\''") + "'"
+
+    // ---------- Helpers ----------
 
     function refresh() {
         runner.disconnectSource(command);
@@ -38,6 +47,8 @@ PlasmoidItem {
         return Math.min(100, Math.max(0, percent < 0 ? 0 : percent));
     }
 
+    // ---------- Lifecycle ----------
+
     preferredRepresentation: compactRepresentation
     toolTipMainText: ""
     toolTipSubText: ""
@@ -56,6 +67,8 @@ PlasmoidItem {
         repeat: true
         onTriggered: root.now = Date.now()
     }
+
+    // ---------- Data loading ----------
 
     Plasma5Support.DataSource {
         id: runner
@@ -82,6 +95,8 @@ PlasmoidItem {
             }
         }
     }
+
+    // ---------- Representations ----------
 
     compactRepresentation: RowLayout {
         spacing: Kirigami.Units.smallSpacing
