@@ -2,7 +2,7 @@ PACKAGE := package
 ID := de.ruiny.codexlimits
 BUILD := build/$(ID).plasmoid
 
-.PHONY: dev install uninstall package clean check
+.PHONY: dev install uninstall package clean check format hook
 
 dev:
 	plasmoidviewer -a $(PACKAGE)
@@ -25,6 +25,12 @@ package:
 check:
 	python3 -m py_compile package/contents/core/limits.py
 	qmllint package/contents/ui/main.qml
+
+format:
+	uvx --from ruff==0.16.7 ruff format package/contents/core/limits.py
+
+hook:
+	pre-commit install
 
 clean:
 	rm -rf build

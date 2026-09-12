@@ -18,6 +18,7 @@ FIVE_HOUR_MINUTES = 5 * 60
 
 # ---------- Codex communication ----------
 
+
 def find_codex():
     # apparently """text starting here is a py convencion
     """Locate an executable Codex CLI across common user installations.
@@ -45,7 +46,9 @@ def read_response(process, request_id):
         message = json.loads(line)
         if message.get("id") == request_id:
             if "error" in message:
-                raise RuntimeError(message["error"].get("message", "Codex request failed"))
+                raise RuntimeError(
+                    message["error"].get("message", "Codex request failed")
+                )
             return message["result"]
     raise RuntimeError("Codex did not respond")
 
@@ -55,6 +58,7 @@ def send(process, message):
 
 
 # ---------- Rate-limit parsing ----------
+
 
 def weekly_window(result):
     snapshot = result.get("rateLimits") or {}
@@ -73,6 +77,7 @@ def five_hour_window(result):
 
 
 # ---------- Public workflow ----------
+
 
 def fetch():
     """Fetch and normalize the usage windows displayed by the widget.
