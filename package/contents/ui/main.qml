@@ -55,7 +55,7 @@ PlasmoidItem {
     Component.onCompleted: refresh()
 
     Timer {
-        interval: 5 * 60 * 1000
+        interval: 30 * 1000
         running: true
         repeat: true
         onTriggered: root.refresh()

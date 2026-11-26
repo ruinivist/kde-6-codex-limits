@@ -2,7 +2,7 @@
 
 A small KDE Plasma 6 widget that shows Codex five-hour and weekly usage limits.
 
-It reads the limits from the locally authenticated Codex CLI and refreshes every five minutes. There are no settings.
+It reads the limits from the locally authenticated Codex CLI and refreshes every 30 seconds. There are no settings.
 
 ## Requirements
 
